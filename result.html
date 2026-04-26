@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Results</title>
+    <style>
+        body {
+            font-family: 'Segoe UI';
+            background: #0f172a;
+            color: white;
+            padding: 20px;
+        }
+
+        h2 { color: #38bdf8; }
+
+        .card {
+            background: #1e293b;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+        }
+
+        .good { color: #22c55e; }
+        .bad { color: #ef4444; }
+    </style>
+</head>
+
+<body>
+
+<h2>📊 Skill Analysis</h2>
+
+<div class="card">
+<h3>Strong Skills</h3>
+{% for s, sc in strong %}
+<p class="good">{{ s }} → {{ sc }}/10</p>
+{% endfor %}
+</div>
+
+<div class="card">
+<h3>Weak Skills</h3>
+{% for s, sc in weak %}
+<p class="bad">{{ s }} → {{ sc }}/10</p>
+{% endfor %}
+</div>
+
+<div class="card">
+<h3>📚 Learning Plan</h3>
+{% for p in plan %}
+<p>👉 {{ p }}</p>
+{% endfor %}
+</div>
+
+</body>
+</html>

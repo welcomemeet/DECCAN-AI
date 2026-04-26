@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Career Agent</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #0f172a;
+            color: white;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin: auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #38bdf8;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            background: #1e293b;
+            color: white;
+        }
+
+        button {
+            background: #38bdf8;
+            color: black;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        #chat {
+            background: #1e293b;
+            padding: 15px;
+            border-radius: 10px;
+            height: 300px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+
+        .ai {
+            color: #38bdf8;
+        }
+
+        .user {
+            color: #22c55e;
+        }
+
+        input {
+            width: 75%;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            background: #1e293b;
+            color: white;
+        }
+
+        .progress {
+            width: 100%;
+            background: #334155;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+
+        .bar {
+            height: 10px;
+            width: 0%;
+            background: #22c55e;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+
+<h1>🚀 AI Career Assessment Agent</h1>
+
+<textarea id="jd" placeholder="Paste Job Description"></textarea>
+<textarea id="resume" placeholder="Paste Resume"></textarea>
+
+<button onclick="start()">Start AI Interview</button>
+
+<div class="progress">
+    <div id="bar" class="bar"></div>
+</div>
+
+<div id="chat"></div>
+
+<input id="answer" placeholder="Type your answer"/>
+<button onclick="send()">Send</button>
+
+</div>
+
+<script>
+let total = 5;
+let current = 0;
+
+function updateProgress() {
+    current++;
+    let percent = (current / total) * 100;
+    document.getElementById("bar").style.width = percent + "%";
+}
+
+function start() {
+    fetch("/start", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            jd: document.getElementById("jd").value,
+            resume: document.getElementById("resume").value
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById("chat").innerHTML += 
+            "<p class='ai'><b>AI:</b> " + data.question + "</p>";
+    });
+}
+
+function send() {
+    let ans = document.getElementById("answer").value;
+
+    document.getElementById("chat").innerHTML += 
+        "<p class='user'><b>You:</b> " + ans + "</p>";
+
+    fetch("/answer", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({answer: ans})
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.done) {
+            window.location.href = "/result";
+        } else {
+            updateProgress();
+            document.getElementById("chat").innerHTML += 
+                "<p class='ai'><b>AI:</b> " + data.question + "</p>";
+        }
+    });
+
+    document.getElementById("answer").value = "";
+}
+</script>
+
+</body>
+</html>
